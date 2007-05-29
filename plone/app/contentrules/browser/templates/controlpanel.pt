@@ -38,7 +38,7 @@
         <p i18n:translate="description-rules-globalsettings">
             The following settings affect rules globally.
         </p>
-        <form name="ruleSettings" method="POST"
+        <form name="ruleSettings" method="post"
              tal:attributes="action string:${context/absolute_url}/@@rules-controlpanel">
             <div class="field">
                 <input type="hidden" name="global_enable:boolean:default" value="" />
@@ -73,7 +73,7 @@
        <fieldset id="fieldset-rules">
             <legend id="fieldsetlegend-rules" i18n:translate="legend-contentrules">Content rules</legend>
             <p i18n:translate="description-contentrules">Overview of the content rules that can be assigned to folders and other types of containers in the portal.</p>
-            <form method="POST" name="rulesFilter" 
+            <form method="post" name="rulesFilter" 
                   tal:attributes="action string:${context/absolute_url}/@@rules-controlpanel">
             <div class="field chooser-right"
                  tal:define="selected request/ruleType | nothing;">
@@ -99,7 +99,7 @@
             </div>
             </form>
             <div class="visualClear"><!-- --></div>
-            <form style="display: inline" method="POST"
+            <form style="display: inline" method="post"
                   id="rules_table_form"
                   metal:define-macro="rules_table_form"
                   tal:define="rules rules|view/registeredRules"
@@ -143,7 +143,7 @@
                        i18n:attributes="value label_delete;" />
             </tal:ruleactions>
             </form>
-            <form class="inlineDisplay" method="POST" tal:attributes="action string:${context/absolute_url}/+rule/plone.ContentRule">
+            <form class="inlineDisplay" method="post" tal:attributes="action string:${context/absolute_url}/+rule/plone.ContentRule">
                 <input class="context" type="submit" value="Add content rule" name="form.button.Add"
                        i18n:attributes="value label_contentrule_add;" />
             </form>
