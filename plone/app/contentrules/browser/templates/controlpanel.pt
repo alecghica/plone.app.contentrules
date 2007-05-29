@@ -90,12 +90,14 @@
                     </option>
                     </tal:option>
                 </select>
+                <div>
                 <noscript>
                     <input type="submit"
                            class="context"
                            value="Show"
                            i18n:attributes="value label_show;" />
                 </noscript>
+                </div>
             </div>
             </form>
             <div class="visualClear"><!-- --></div>
@@ -144,8 +146,10 @@
             </tal:ruleactions>
             </form>
             <form class="inlineDisplay" method="post" tal:attributes="action string:${context/absolute_url}/+rule/plone.ContentRule">
+                <div>
                 <input class="context" type="submit" value="Add content rule" name="form.button.Add"
                        i18n:attributes="value label_contentrule_add;" />
+                </div>
             </form>
 
        </fieldset>
