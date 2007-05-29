@@ -38,7 +38,7 @@
         <p i18n:translate="description-rules-globalsettings">
             The following settings affect rules globally.
         </p>
-        <form name="ruleSettings" method="post"
+        <form method="post"
              tal:attributes="action string:${context/absolute_url}/@@rules-controlpanel">
             <div class="field">
                 <input type="hidden" name="global_enable:boolean:default" value="" />
@@ -73,7 +73,7 @@
        <fieldset id="fieldset-rules">
             <legend id="fieldsetlegend-rules" i18n:translate="legend-contentrules">Content rules</legend>
             <p i18n:translate="description-contentrules">Overview of the content rules that can be assigned to folders and other types of containers in the portal.</p>
-            <form method="post" name="rulesFilter" 
+            <form method="post"
                   tal:attributes="action string:${context/absolute_url}/@@rules-controlpanel">
             <div class="field chooser-right"
                  tal:define="selected request/ruleType | nothing;">
