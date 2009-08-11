@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from email.MIMEText import MIMEText
 from zope.component import getUtility, getMultiAdapter, getSiteManager
 from zope.component.interfaces import IObjectEvent
@@ -12,7 +10,7 @@ from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.contentrules.rule.interfaces import IRuleAction, IExecutable
 
 from Products.MailHost.interfaces import IMailHost
-from Products.SecureMailHost.SecureMailHost import SecureMailHost
+from Products.MailHost.MailHost import MailHost
 
 class DummyEvent(object):
     implements(IObjectEvent)
@@ -20,14 +18,19 @@ class DummyEvent(object):
     def __init__(self, object):
         self.object = object
 
-class DummySecureMailHost(SecureMailHost):
-    meta_type = 'Dummy secure Mail Host'
+class DummyMailHost(MailHost):
+    meta_type = 'Dummy Mail Host'
     def __init__(self, id):
         self.id = id
         self.sent = []
 
-    def _send(self, mfrom, mto, messageText, debug=False):
-        self.sent.append(messageText)
+    def send(self, messageText, mto=None, mfrom=None, subject=None,
+             *args, **kw):
+        msg = MIMEText(messageText, 'plain', 'utf-8')
+        msg['To'] = mto
+        msg['From'] = mfrom
+        msg['Subject'] = subject or '[No Subject]'
+        self.sent.append(msg)
 
 
 class TestMailAction(ContentRulesTestCase):
@@ -36,7 +39,7 @@ class TestMailAction(ContentRulesTestCase):
         self.setRoles(('Manager',))
         self.portal.invokeFactory('Folder', 'target')
         self.folder.invokeFactory('Document', 'd1',
-            title=unicode('Wälkommen', 'utf-8'))
+                                  title='W\xc3\xa4lkommen'.decode('utf-8'))
 
     def testRegistered(self):
         element = getUtility(IRuleAction, name='plone.actions.Mail')
@@ -79,12 +82,12 @@ class TestMailAction(ContentRulesTestCase):
         self.loginAsPortalOwner()
         sm = getSiteManager(self.portal)
         sm.unregisterUtility(provided=IMailHost)
-        dummyMailHost = DummySecureMailHost('dMailhost')
+        dummyMailHost = DummyMailHost('dMailhost')
         sm.registerUtility(dummyMailHost, IMailHost)
         e = MailAction()
         e.source = "foo@bar.be"
         e.recipients = "bar@foo.be"
-        e.message = u"Päge '${title}' created in ${url} !"
+        e.message = "P\xc3\xa4ge '${title}' created in ${url} !".decode('utf-8')
         ex = getMultiAdapter((self.folder, e, DummyEvent(self.folder.d1)),
                              IExecutable)
         ex()
@@ -94,15 +97,15 @@ class TestMailAction(ContentRulesTestCase):
                         mailSent.get('Content-Type'))
         self.assertEqual("bar@foo.be", mailSent.get('To'))
         self.assertEqual("foo@bar.be", mailSent.get('From'))
-        self.assertEqual("P\xc3\xa4ge 'W\xc3\xa4lkommen' created in \
-http://nohost/plone/Members/test_user_1_/d1 !",
+        # The output message should be a utf-8 encoded string
+        self.assertEqual("P\xc3\xa4ge 'W\xc3\xa4lkommen' created in http://nohost/plone/Members/test_user_1_/d1 !",
                          mailSent.get_payload(decode=True))
 
     def testExecuteNoSource(self):
         self.loginAsPortalOwner()
         sm = getSiteManager(self.portal)
         sm.unregisterUtility(provided=IMailHost)
-        dummyMailHost = DummySecureMailHost('dMailhost')
+        dummyMailHost = DummyMailHost('dMailhost')
         sm.registerUtility(dummyMailHost, IMailHost)
         e = MailAction()
         e.recipients = 'bar@foo.be,foo@bar.be'
@@ -127,7 +130,7 @@ http://nohost/plone/Members/test_user_1_/d1 !",
         self.loginAsPortalOwner()
         sm = getSiteManager(self.portal)
         sm.unregisterUtility(provided=IMailHost)
-        dummyMailHost = DummySecureMailHost('dMailhost')
+        dummyMailHost = DummyMailHost('dMailhost')
         sm.registerUtility(dummyMailHost, IMailHost)
         e = MailAction()
         e.source = 'foo@bar.be'

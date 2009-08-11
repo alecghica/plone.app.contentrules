@@ -4,6 +4,9 @@ Changelog
 2.0.0 - unreleased
 ------------------
 
+- Removed SecureMailHost dependency.
+  [alecm]
+
 - Adjusted some import statements to use the new zope.container.
   [hannosch]
 
