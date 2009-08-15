@@ -96,19 +96,9 @@ action or enter an email in the portal properties'
         subject = self.element.subject.replace("${url}", event_url)
         subject = subject.replace("${title}", event_title)
 
-        # encode stuff
-        if isinstance(message, unicode):
-            message = message.encode(email_charset)
-        if isinstance(subject, unicode):
-            subject = subject.encode(email_charset)
-        if isinstance(source, unicode):
-            source = source.encode(email_charset)
-
         for email_recipient in recipients:
-            if isinstance(email_recipient, unicode):
-                email_recipient = email_recipient.encode(email_charset)
             mailhost.send(message, email_recipient, source,
-                          subject=subject)
+                          subject=subject, charset=email_charset)
         return True
 
 class MailAddForm(AddForm):

@@ -1,4 +1,5 @@
-from email.MIMEText import MIMEText
+from email import message_from_string
+from email.Message import Message
 from zope.component import getUtility, getMultiAdapter, getSiteManager
 from zope.component.interfaces import IObjectEvent
 from zope.interface import implements
@@ -24,12 +25,8 @@ class DummyMailHost(MailHost):
         self.id = id
         self.sent = []
 
-    def send(self, messageText, mto=None, mfrom=None, subject=None,
-             *args, **kw):
-        msg = MIMEText(messageText, 'plain', 'utf-8')
-        msg['To'] = mto
-        msg['From'] = mfrom
-        msg['Subject'] = subject or '[No Subject]'
+    def _send(self, mfrom, mto, messageText, *args, **kw):
+        msg = message_from_string(messageText)
         self.sent.append(msg)
 
 
@@ -91,7 +88,7 @@ class TestMailAction(ContentRulesTestCase):
         ex = getMultiAdapter((self.folder, e, DummyEvent(self.folder.d1)),
                              IExecutable)
         ex()
-        self.failUnless(isinstance(dummyMailHost.sent[0], MIMEText))
+        self.failUnless(isinstance(dummyMailHost.sent[0], Message))
         mailSent = dummyMailHost.sent[0]
         self.assertEqual('text/plain; charset="utf-8"',
                         mailSent.get('Content-Type'))
@@ -116,7 +113,7 @@ class TestMailAction(ContentRulesTestCase):
         # if we provide a site mail address this won't fail anymore
         sm.manage_changeProperties({'email_from_address': 'manager@portal.be'})
         ex()
-        self.failUnless(isinstance(dummyMailHost.sent[0], MIMEText))
+        self.failUnless(isinstance(dummyMailHost.sent[0], Message))
         mailSent = dummyMailHost.sent[0]
         self.assertEqual('text/plain; charset="utf-8"',
                         mailSent.get('Content-Type'))
@@ -140,7 +137,7 @@ class TestMailAction(ContentRulesTestCase):
                              IExecutable)
         ex()
         self.assertEqual(len(dummyMailHost.sent), 2)
-        self.failUnless(isinstance(dummyMailHost.sent[0], MIMEText))
+        self.failUnless(isinstance(dummyMailHost.sent[0], Message))
         mailSent = dummyMailHost.sent[0]
         self.assertEqual('text/plain; charset="utf-8"',
                         mailSent.get('Content-Type'))
