@@ -142,12 +142,12 @@
                            class="context"
                            />
                 </div>
-                <dl>
-                    <dt tal:content="condition/title" i18n:translate="">Transition was publish.</dt>
-                    <dd tal:content="condition/summary">
+                <div>
+                    <header tal:content="condition/title" i18n:translate="">Transition was publish.</header>
+                    <span tal:content="condition/summary">
                         Something happened
-                    </dd>
-                </dl>
+                    </span>
+                </div>
             </div>
         </form>
 
@@ -224,13 +224,13 @@
                            class="context"
                            />
                 </div>
-                <dl>
-                    <dt tal:content="action/title"
-                        i18n:translate="">Move to folder</dt>
-                    <dd tal:content="action/summary">
+                <div>
+                    <header tal:content="action/title"
+                        i18n:translate="">Move to folder</header>
+                    <span tal:content="action/summary">
                         Something happened
-                    </dd>
-                </dl>
+                    </span>
+                </div>
             </div>
         </form>
 
@@ -289,16 +289,14 @@
             <p i18n:translate="description_contentrules_rule_assignments">
                 This rule is assigned to the following locations.
             </p>
-            <dl>
-                <tal:items repeat="assignment assignments">
-                    <dt>
+                <article tal:repeat="assignment assignments">
+                    <header>
                         <img tal:replace="structure assignment/icon/html_tag" />
                         <a tal:attributes="href string:${assignment/url}/@@manage-content-rules"
                            tal:content="assignment/title" />
-                    </dt>
-                    <dd tal:content="assignment/description"></dd>
-                </tal:items>
-            </dl>
+                    </header>
+                    <span tal:content="assignment/description"></span>
+                </article>
           </tal:assignments>
         </fieldset>
 
